@@ -109,15 +109,15 @@ function sendHelp(id) {
     id,
     `
         <b>Available commands:</b>
-        <code>/stop</code> - Stop the bot
-        <code>/start</code> - Start the bot
-        <code>/restart</code> - Restart the bot
-        <code>/restart-commands</code> - Restart the commands
-        <code>/delete</code> - Delete the bot
-        <code>/init</code> - Initialize the bot
-        <code>/pull</code> - Pull the repository
-        <code>/balance</code> - Get the balance
-        <code>/positions</code> - Get the positions
+        <code>/stop</code> - Stop bot
+        <code>/start</code> - Start bot
+        <code>/restart</code> - Restart bot
+        <code>/restart-commands</code> - Restart commands
+        <code>/delete</code> - Delete bot
+        <code>/init</code> - Initialize bot
+        <code>/pull</code> - Pull repository
+        <code>/balance</code> - Get balance
+        <code>/positions</code> - Get positions
         <code>/help</code> - Show awailable commands
         `,
     { parse_mode: "HTML" }
