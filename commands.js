@@ -7,7 +7,7 @@ const bot = new TelegramBot(telegram.token, { polling: true });
 
 bot.onText(/stop/, (msg) => {
   bot.sendMessage(msg.chat.id, "Trade Bot Stopping...");
-  exec("pm2 stop bot", (error, stdout, stderr) => {
+  exec("pm2 stop bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
       bot.sendMessage(msg.chat.id, "Failed to stop Trade Bot.");
     } else {
@@ -18,7 +18,7 @@ bot.onText(/stop/, (msg) => {
 
 bot.onText(/start/, (msg) => {
   bot.sendMessage(msg.chat.id, "Trade Bot Starting...");
-  exec("pm2 start bot", (error, stdout, stderr) => {
+  exec("pm2 start bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
       bot.sendMessage(msg.chat.id, "Failed to start Trade Bot.");
     } else {
@@ -29,7 +29,7 @@ bot.onText(/start/, (msg) => {
 
 bot.onText(/kill/, (msg) => {
   bot.sendMessage(msg.chat.id, "Trade Bot Deleting...");
-  exec("pm2 delete bot", (error, stdout, stderr) => {
+  exec("pm2 delete bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
       bot.sendMessage(msg.chat.id, "Failed to delete Trade Bot.");
     } else {
@@ -40,7 +40,7 @@ bot.onText(/kill/, (msg) => {
 
 bot.onText(/init/, (msg) => {
   bot.sendMessage(msg.chat.id, "Trade Bot Initializing...");
-  exec("pm2 start app.js --name bot", (error, stdout, stderr) => {
+  exec("pm2 start app.js --name bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
       bot.sendMessage(msg.chat.id, "Failed to initialize Trade Bot.");
     } else {
@@ -51,7 +51,7 @@ bot.onText(/init/, (msg) => {
 
 bot.onText(/restart/, (msg) => {
   bot.sendMessage(msg.chat.id, "Trade Bot Restarting...");
-  exec("pm2 restart bot", (error, stdout, stderr) => {
+  exec("pm2 restart bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
       bot.sendMessage(msg.chat.id, "Failed to restart Trade Bot.");
     } else {
