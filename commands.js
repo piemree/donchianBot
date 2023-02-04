@@ -105,23 +105,25 @@ function restartCommands(id) {
 }
 
 function sendHelp(id) {
-  bot.sendMessage(
-    id,
-`<b>Available commands:</b>
-
-<code>/stop</code> Stop bot
-<code>/start</code> Start bot
-<code>/restart</code> Restart bot
-<code>/restart-commands</code> Restart commands
-<code>/delete</code> Delete bot
-<code>/init</code>  Initialize bot
-<code>/pull</code> Pull repository
-<code>/balance</code> Get balance
-<code>/positions</code> Get positions
-<code>/help</code> Show available commands`,
-    { parse_mode: "HTML" }
-  );
+  bot.getMyCommands().then((commands) => {
+    const help = commands.reduce((acc, command) => {
+      return acc + `${command.command} - ${command.description}` + "\n";
+    }, "");
+    bot.sendMessage(id, help);
+  });
 }
+bot.setMyCommands([
+  { command: "/balance", description: "Get balance" },
+  { command: "/positions", description: "Get positions" },
+  { command: "/stop", description: "Stop bot" },
+  { command: "/start", description: "Start bot" },
+  { command: "/init", description: "Initialize bot" },
+  { command: "/restart", description: "Restart bot" },
+  { command: "/restartcommands", description: "Restart commands" },
+  { command: "/delete", description: "Delete bot" },
+  { command: "/pull", description: "Pull repository" },
+  { command: "/help", description: "Show available commands" },
+]);
 
 bot.on("message", (msg) => {
   const message = msg.text.toLowerCase().trim();
@@ -136,7 +138,7 @@ bot.on("message", (msg) => {
     case "/restart":
       restartBot(id);
       break;
-    case "/restart-commands":
+    case "/restartcommands":
       restartCommands(id);
       break;
     case "/delete":
