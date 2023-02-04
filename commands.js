@@ -5,68 +5,68 @@ const exec = require("child_process").exec;
 
 const bot = new TelegramBot(telegram.token, { polling: true });
 
-bot.onText(/stop/, (msg) => {
-  bot.sendMessage(msg.chat.id, "Trade Bot Stopping...");
+function stopBot() {
+  bot.sendMessage(telegram.chatId, "Trade Bot Stopping...");
   exec("pm2 stop bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
-      bot.sendMessage(msg.chat.id, "Failed to stop Trade Bot.");
+      bot.sendMessage(telegram.chatId, "Failed to stop Trade Bot.");
     } else {
-      bot.sendMessage(msg.chat.id, "Trade Bot Stopped Successfully.");
+      bot.sendMessage(telegram.chatId, "Trade Bot Stopped Successfully.");
     }
   });
-});
+}
 
-bot.onText(/start/, (msg) => {
-  bot.sendMessage(msg.chat.id, "Trade Bot Starting...");
+function startBot() {
+  bot.sendMessage(telegram.chatId, "Trade Bot Starting...");
   exec("pm2 start bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
-      bot.sendMessage(msg.chat.id, "Failed to start Trade Bot.");
+      bot.sendMessage(telegram.chatId, "Failed to start Trade Bot.");
     } else {
-      bot.sendMessage(msg.chat.id, "Trade Bot Started Successfully.");
+      bot.sendMessage(telegram.chatId, "Trade Bot Started Successfully.");
     }
   });
-});
+}
 
-bot.onText(/delete/, (msg) => {
-  bot.sendMessage(msg.chat.id, "Trade Bot Deleting...");
+function deleteBot() {
+  bot.sendMessage(telegram.chatId, "Trade Bot Deleting...");
   exec("pm2 delete bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
-      bot.sendMessage(msg.chat.id, "Failed to delete Trade Bot.");
+      bot.sendMessage(telegram.chatId, "Failed to delete Trade Bot.");
     } else {
-      bot.sendMessage(msg.chat.id, "Trade Bot Deleted Successfully.");
+      bot.sendMessage(telegram.chatId, "Trade Bot Deleted Successfully.");
     }
   });
-});
+}
 
-bot.onText(/init/, (msg) => {
-  bot.sendMessage(msg.chat.id, "Trade Bot Initializing...");
+function initBot() {
+  bot.sendMessage(telegram.chatId, "Trade Bot Initializing...");
   exec("pm2 start app.js --name bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
-      bot.sendMessage(msg.chat.id, "Failed to initialize Trade Bot.");
+      bot.sendMessage(telegram.chatId, "Failed to initialize Trade Bot.");
     } else {
-      bot.sendMessage(msg.chat.id, "Trade Bot Initialized Successfully.");
+      bot.sendMessage(telegram.chatId, "Trade Bot Initialized Successfully.");
     }
   });
-});
+}
 
-bot.onText(/restart/, (msg) => {
-  bot.sendMessage(msg.chat.id, "Trade Bot Restarting...");
+function restartBot() {
+  bot.sendMessage(telegram.chatId, "Trade Bot Restarting...");
   exec("pm2 restart bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
-      bot.sendMessage(msg.chat.id, "Failed to restart Trade Bot.");
+      bot.sendMessage(telegram.chatId, "Failed to restart Trade Bot.");
     } else {
-      bot.sendMessage(msg.chat.id, "Trade Bot Restarted Successfully.");
+      bot.sendMessage(telegram.chatId, "Trade Bot Restarted Successfully.");
     }
   });
-});
+}
 
-bot.onText(/balance/, (msg) => {
+function getBalance() {
   b.getBalance().then((balance) => {
-    bot.sendMessage(msg.chat.id, balance);
+    bot.sendMessage(telegram.chatId, balance);
   });
-});
+}
 
-bot.onText(/positions/, (msg) => {
+function getPositions() {
   b.findPositions({
     symbol: botConfig.symbol,
   })
@@ -80,50 +80,85 @@ bot.onText(/positions/, (msg) => {
     .catch((error) => {
       bot.sendMessage(msg.chat.id, JSON.stringify(error.body, null, 2));
     });
-});
+}
 
-// fetch repository and restart bot
-bot.onText(/fetch/, (msg) => {
-  bot.sendMessage(msg.chat.id, "Fetching repository...");
+function pullRepo() {
+  bot.sendMessage(msg.chat.id, "Pull repository...");
   exec("git pull", (error, stdout, stderr) => {
     if (error) {
-      bot.sendMessage(msg.chat.id, "Failed to fetch.");
+      bot.sendMessage(msg.chat.id, "Failed to pull.");
     } else {
-      bot.sendMessage(msg.chat.id, "Fetch Successfully.");
+      bot.sendMessage(msg.chat.id, "Pull Successfully.");
     }
   });
-});
+}
 
-
-bot.onText(/restart-commands/, (msg) => {
-  bot.sendMessage(msg.chat.id, "Updating commands...");
+function restartCommands() {
+  bot.sendMessage(msg.chat.id, "Restarting commands...");
   exec("pm2 restart commands && pm2 save", (error, stdout, stderr) => {
     if (error) {
-      bot.sendMessage(msg.chat.id, "Failed to update commands.");
+      bot.sendMessage(msg.chat.id, "Failed to restart commands.");
     } else {
-      bot.sendMessage(msg.chat.id, "Commands Updated Successfully.");
+      bot.sendMessage(msg.chat.id, "Commands Restarted Successfully.");
     }
   });
-});
+}
 
-// send available commands when /help is received
-bot.onText(/help/, (msg) => {
-  // send as html available commands
+function sendHelp() {
   bot.sendMessage(
     msg.chat.id,
     `
-    <b>Available commands:</b>
-    <code>/balance</code> - get current balance
-    <code>/positions</code> - get current positions
-    <code>/start</code> - start trade bot
-    <code>/stop</code> - stop trade bot
-    <code>/delete</code> - delete trade bot
-    <code>/init</code> - initialize trade bot
-    <code>/fetch</code> - fetch repository
-    <code>/restart</code> - restart trade bot
-    <code>/restart-commands</code> - restart commands
-    <code>/help</code> - show available commands
-    `,
+        <b>Available commands:</b>
+        <code>/balance</code> - get current balance
+        <code>/positions</code> - get current positions
+        <code>/start</code> - start trade bot
+        <code>/stop</code> - stop trade bot
+        <code>/delete</code> - delete trade bot
+        <code>/init</code> - initialize trade bot
+        <code>/fetch</code> - fetch repository
+        <code>/restart</code> - restart trade bot
+        <code>/restart-commands</code> - restart commands
+        <code>/help</code> - show available commands
+        `,
     { parse_mode: "HTML" }
   );
+}
+
+
+bot.on("message", (msg) => {
+  switch (msg.text) {
+    case "stop":
+      stopBot();
+      break;
+    case "start":
+      startBot();
+      break;
+    case "restart":
+      restartBot();
+      break;
+    case "restart-commands":
+      restartCommands();
+      break;
+    case "delete":
+      deleteBot();
+      break;
+    case "init":
+      initBot();
+      break;
+    case "pull":
+      pullRepo();
+      break;
+    case "balance":
+      getBalance();
+      break;
+    case "positions":
+      getPositions();
+      break;
+    case "help":
+      sendHelp();
+      break;
+    default:
+      bot.sendMessage(msg.chat.id, "Invalid command");
+      break;
+  }
 });
