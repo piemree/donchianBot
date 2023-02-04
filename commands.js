@@ -84,12 +84,20 @@ bot.onText(/positions/, (msg) => {
 
 // fetch repository and restart bot
 bot.onText(/update/, (msg) => {
-  bot.sendMessage(msg.chat.id, "Updating...");
-  exec("git pull && pm2 restart all && pm2 save", (error, stdout, stderr) => {
+  bot.sendMessage(msg.chat.id, "Fetching repository...");
+  exec("git pull", (error, stdout, stderr) => {
     if (error) {
-      bot.sendMessage(msg.chat.id, "Failed to update.");
+      bot.sendMessage(msg.chat.id, "Failed to fetch.");
     } else {
-      bot.sendMessage(msg.chat.id, "Updated Successfully.");
+      bot.sendMessage(msg.chat.id, "Fetch Successfully.");
+    }
+  });
+
+  exec("pm2 restart bot && pm2 save", (error, stdout, stderr) => {
+    if (error) {
+      bot.sendMessage(msg.chat.id, "Failed to restart Trade Bot.");
+    } else {
+      bot.sendMessage(msg.chat.id, "Trade Bot Restarted Successfully.");
     }
   });
 });
