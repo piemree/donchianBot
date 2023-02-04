@@ -27,7 +27,7 @@ bot.onText(/start/, (msg) => {
   });
 });
 
-bot.onText(/kill/, (msg) => {
+bot.onText(/delete/, (msg) => {
   bot.sendMessage(msg.chat.id, "Trade Bot Deleting...");
   exec("pm2 delete bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
@@ -93,7 +93,7 @@ bot.onText(/help/, (msg) => {
     <code>/positions</code> - get current positions
     <code>/start</code> - start trade bot
     <code>/stop</code> - stop trade bot
-    <code>/kill</code> - kill trade bot
+    <code>/delete</code> - delete trade bot
     <code>/init</code> - initialize trade bot
     <code>/restart</code> - restart trade bot
     `,
