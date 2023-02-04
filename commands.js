@@ -93,16 +93,6 @@ function pullRepo(id) {
   });
 }
 
-function restartCommands(id) {
-  bot.sendMessage(id, "Restarting commands...");
-  exec("pm2 restart commands && pm2 save", (error, stdout, stderr) => {
-    if (error) {
-      bot.sendMessage(id, "Failed to restart commands.");
-    } else {
-      bot.sendMessage(id, "Commands Restarted Successfully.");
-    }
-  });
-}
 
 function sendHelp(id) {
   bot.getMyCommands().then((commands) => {
@@ -119,7 +109,6 @@ bot.setMyCommands([
   { command: "/start", description: "Start bot" },
   { command: "/init", description: "Initialize bot" },
   { command: "/restart", description: "Restart bot" },
-  { command: "/restartcommands", description: "Restart commands" },
   { command: "/delete", description: "Delete bot" },
   { command: "/pull", description: "Pull repository" },
   { command: "/help", description: "Show available commands" },
@@ -137,9 +126,6 @@ bot.on("message", (msg) => {
       break;
     case "/restart":
       restartBot(id);
-      break;
-    case "/restartcommands":
-      restartCommands(id);
       break;
     case "/delete":
       deleteBot(id);
