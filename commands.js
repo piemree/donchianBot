@@ -95,7 +95,7 @@ bot.onText(/update/, (msg) => {
           bot.sendMessage(msg.chat.id, "Failed to restart Trade Bot.");
         } else {
           bot.sendMessage(msg.chat.id, "Trade Bot Restarted Successfully.");
-          exec("pm2 restart commads && pm2 save", (error, stdout, stderr) => {
+          exec("pm2 restart commands && pm2 save", (error, stdout, stderr) => {
             if (error) {
               bot.sendMessage(msg.chat.id, "Failed to restart Commads.");
             } else {
