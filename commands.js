@@ -5,7 +5,7 @@ const exec = require("child_process").exec;
 
 const bot = new TelegramBot(telegram.token, { polling: true });
 
-function stopBot() {
+function stopBot(id) {
   bot.sendMessage(telegram.chatId, "Trade Bot Stopping...");
   exec("pm2 stop bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
@@ -16,7 +16,7 @@ function stopBot() {
   });
 }
 
-function startBot() {
+function startBot(id) {
   bot.sendMessage(telegram.chatId, "Trade Bot Starting...");
   exec("pm2 start bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
@@ -27,7 +27,7 @@ function startBot() {
   });
 }
 
-function deleteBot() {
+function deleteBot(id) {
   bot.sendMessage(telegram.chatId, "Trade Bot Deleting...");
   exec("pm2 delete bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
@@ -38,7 +38,7 @@ function deleteBot() {
   });
 }
 
-function initBot() {
+function initBot(id) {
   bot.sendMessage(telegram.chatId, "Trade Bot Initializing...");
   exec("pm2 start app.js --name bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
@@ -49,7 +49,7 @@ function initBot() {
   });
 }
 
-function restartBot() {
+function restartBot(id) {
   bot.sendMessage(telegram.chatId, "Trade Bot Restarting...");
   exec("pm2 restart bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
@@ -60,105 +60,109 @@ function restartBot() {
   });
 }
 
-function getBalance() {
+function getBalance(id) {
   b.getBalance().then((balance) => {
     bot.sendMessage(telegram.chatId, balance);
   });
 }
 
-function getPositions() {
+function getPositions(id) {
   b.findPositions({
     symbol: botConfig.symbol,
   })
     .then((status) => {
       if (!status.LongPosition && !status.ShortPosition) {
-        bot.sendMessage(msg.chat.id, "No open positions");
+        bot.sendMessage(id, "No open positions");
         return;
       }
-      bot.sendMessage(msg.chat.id, JSON.stringify(status, null, 2));
+      bot.sendMessage(id, JSON.stringify(status, null, 2));
     })
     .catch((error) => {
-      bot.sendMessage(msg.chat.id, JSON.stringify(error.body, null, 2));
+      bot.sendMessage(id, JSON.stringify(error.body, null, 2));
     });
 }
 
-function pullRepo() {
-  bot.sendMessage(msg.chat.id, "Pull repository...");
+function pullRepo(id) {
+  bot.sendMessage(id, "Pull repository...");
   exec("git pull", (error, stdout, stderr) => {
     if (error) {
-      bot.sendMessage(msg.chat.id, "Failed to pull.");
+      bot.sendMessage(id, "Failed to pull.");
     } else {
-      bot.sendMessage(msg.chat.id, "Pull Successfully.");
+      bot.sendMessage(id, "Pull Successfully.");
     }
   });
 }
 
-function restartCommands() {
-  bot.sendMessage(msg.chat.id, "Restarting commands...");
+function restartCommands(id) {
+  bot.sendMessage(id, "Restarting commands...");
   exec("pm2 restart commands && pm2 save", (error, stdout, stderr) => {
     if (error) {
-      bot.sendMessage(msg.chat.id, "Failed to restart commands.");
+      bot.sendMessage(id, "Failed to restart commands.");
     } else {
-      bot.sendMessage(msg.chat.id, "Commands Restarted Successfully.");
+      bot.sendMessage(id, "Commands Restarted Successfully.");
     }
   });
 }
 
-function sendHelp() {
+function sendHelp(id) {
   bot.sendMessage(
-    msg.chat.id,
+    id,
     `
         <b>Available commands:</b>
-        <code>/balance</code> - get current balance
-        <code>/positions</code> - get current positions
-        <code>/start</code> - start trade bot
-        <code>/stop</code> - stop trade bot
-        <code>/delete</code> - delete trade bot
-        <code>/init</code> - initialize trade bot
-        <code>/fetch</code> - fetch repository
-        <code>/restart</code> - restart trade bot
-        <code>/restart-commands</code> - restart commands
-        <code>/help</code> - show available commands
+        <code>/stop</code> - Stop the bot
+        <code>/start</code> - Start the bot
+        <code>/restart</code> - Restart the bot
+        <code>/restart-commands</code> - Restart the commands
+        <code>/delete</code> - Delete the bot
+        <code>/init</code> - Initialize the bot
+        <code>/pull</code> - Pull the repository
+        <code>/balance</code> - Get the balance
+        <code>/positions</code> - Get the positions
+        <code>/help</code> - Show awailable commands
         `,
     { parse_mode: "HTML" }
   );
 }
 
-
 bot.on("message", (msg) => {
-  switch (msg.text.toLowerCase()) {
-    case "stop":
-      stopBot();
+  const message = msg.text.toLowerCase().trim();
+  const id = msg.chat.id;
+  switch (message) {
+    case "/stop":
+      stopBot(id);
       break;
-    case "start":
-      startBot();
+    case "/start":
+      startBot(id);
       break;
-    case "restart":
-      restartBot();
+    case "/restart":
+      restartBot(id);
       break;
-    case "restart-commands":
-      restartCommands();
+    case "/restart-commands":
+      restartCommands(id);
       break;
-    case "delete":
-      deleteBot();
+    case "/delete":
+      deleteBot(id);
       break;
-    case "init":
-      initBot();
+    case "/init":
+      initBot(id);
       break;
-    case "pull":
-      pullRepo();
+    case "/pull":
+      pullRepo(id);
       break;
-    case "balance":
-      getBalance();
+    case "/balance":
+      getBalance(id);
       break;
-    case "positions":
-      getPositions();
+    case "/positions":
+      getPositions(id);
       break;
-    case "help":
-      sendHelp();
+    case "/help":
+      sendHelp(id);
       break;
     default:
-      bot.sendMessage(msg.chat.id, "Invalid command");
+      bot.sendMessage(
+        id,
+        "Invalid command. Type /help to see available commands."
+      );
       break;
   }
 });
