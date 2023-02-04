@@ -96,7 +96,7 @@ bot.onText(/fetch/, (msg) => {
 
 bot.onText(/restart-bot/, (msg) => {
   bot.sendMessage(msg.chat.id, "Updating Trade Bot...");
-  exec("pm2 start bot && pm2 save", (error, stdout, stderr) => {
+  exec("pm2 restart bot && pm2 save", (error, stdout, stderr) => {
     if (error) {
       bot.sendMessage(msg.chat.id, "Failed to update Trade Bot.");
     } else {
