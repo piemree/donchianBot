@@ -82,6 +82,18 @@ bot.onText(/positions/, (msg) => {
     });
 });
 
+// fetch repository and restart bot
+bot.onText(/update/, (msg) => {
+  bot.sendMessage(msg.chat.id, "Updating...");
+  exec("git pull && pm2 restart all && pm2 save", (error, stdout, stderr) => {
+    if (error) {
+      bot.sendMessage(msg.chat.id, "Failed to update.");
+    } else {
+      bot.sendMessage(msg.chat.id, "Updated Successfully.");
+    }
+  });
+});
+
 // send available commands when /help is received
 bot.onText(/help/, (msg) => {
   // send as html available commands
@@ -96,6 +108,7 @@ bot.onText(/help/, (msg) => {
     <code>/delete</code> - delete trade bot
     <code>/init</code> - initialize trade bot
     <code>/restart</code> - restart trade bot
+    <code>/update</code> - update trade bot
     `,
     { parse_mode: "HTML" }
   );
