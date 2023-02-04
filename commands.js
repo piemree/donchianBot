@@ -83,27 +83,35 @@ bot.onText(/positions/, (msg) => {
 });
 
 // fetch repository and restart bot
-bot.onText(/update/, (msg) => {
+bot.onText(/fetch/, (msg) => {
   bot.sendMessage(msg.chat.id, "Fetching repository...");
   exec("git pull", (error, stdout, stderr) => {
     if (error) {
       bot.sendMessage(msg.chat.id, "Failed to fetch.");
     } else {
       bot.sendMessage(msg.chat.id, "Fetch Successfully.");
-      exec("pm2 restart bot && pm2 save", (error, stdout, stderr) => {
-        if (error) {
-          bot.sendMessage(msg.chat.id, "Failed to restart Trade Bot.");
-        } else {
-          bot.sendMessage(msg.chat.id, "Trade Bot Restarted Successfully.");
-          exec("pm2 restart commands && pm2 save", (error, stdout, stderr) => {
-            if (error) {
-              bot.sendMessage(msg.chat.id, "Failed to restart Commads.");
-            } else {
-              bot.sendMessage(msg.chat.id, "Commads Restarted Successfully.");
-            }
-          });
-        }
-      });
+    }
+  });
+});
+
+bot.onText(/restart-bot/, (msg) => {
+  bot.sendMessage(msg.chat.id, "Updating Trade Bot...");
+  exec("pm2 start bot && pm2 save", (error, stdout, stderr) => {
+    if (error) {
+      bot.sendMessage(msg.chat.id, "Failed to update Trade Bot.");
+    } else {
+      bot.sendMessage(msg.chat.id, "Trade Bot Updated Successfully.");
+    }
+  });
+});
+
+bot.onText(/restart-commands/, (msg) => {
+  bot.sendMessage(msg.chat.id, "Updating commands...");
+  exec("pm2 restart commands && pm2 save", (error, stdout, stderr) => {
+    if (error) {
+      bot.sendMessage(msg.chat.id, "Failed to update commands.");
+    } else {
+      bot.sendMessage(msg.chat.id, "Commands Updated Successfully.");
     }
   });
 });
@@ -122,7 +130,9 @@ bot.onText(/help/, (msg) => {
     <code>/delete</code> - delete trade bot
     <code>/init</code> - initialize trade bot
     <code>/restart</code> - restart trade bot
-    <code>/update</code> - update trade bot
+    <code>/fetch</code> - fetch repository
+    <code>/restart-bot</code> - restart trade bot
+    <code>/restart-commands</code> - restart commands
     <code>/help</code> - show available commands
     `,
     { parse_mode: "HTML" }
