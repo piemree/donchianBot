@@ -1,7 +1,7 @@
 const main = require("./main");
 const { botConfig } = require("./config");
 const { sendMessage } = require("./helpers/telegram");
-sendMessage("test.");
+
 (async () => {
   try {
     while (true) {

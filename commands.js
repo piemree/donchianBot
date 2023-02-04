@@ -116,6 +116,7 @@ bot.onText(/help/, (msg) => {
     <code>/init</code> - initialize trade bot
     <code>/restart</code> - restart trade bot
     <code>/update</code> - update trade bot
+    <code>/help</code> - show available commands
     `,
     { parse_mode: "HTML" }
   );
