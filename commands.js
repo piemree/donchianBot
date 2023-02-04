@@ -126,7 +126,7 @@ function sendHelp() {
 
 
 bot.on("message", (msg) => {
-  switch (msg.text) {
+  switch (msg.text.toLowerCase()) {
     case "stop":
       stopBot();
       break;
