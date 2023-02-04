@@ -94,16 +94,6 @@ bot.onText(/fetch/, (msg) => {
   });
 });
 
-bot.onText(/restart-bot/, (msg) => {
-  bot.sendMessage(msg.chat.id, "Updating Trade Bot...");
-  exec("pm2 restart bot && pm2 save", (error, stdout, stderr) => {
-    if (error) {
-      bot.sendMessage(msg.chat.id, "Failed to update Trade Bot.");
-    } else {
-      bot.sendMessage(msg.chat.id, "Trade Bot Updated Successfully.");
-    }
-  });
-});
 
 bot.onText(/restart-commands/, (msg) => {
   bot.sendMessage(msg.chat.id, "Updating commands...");
@@ -129,9 +119,8 @@ bot.onText(/help/, (msg) => {
     <code>/stop</code> - stop trade bot
     <code>/delete</code> - delete trade bot
     <code>/init</code> - initialize trade bot
-    <code>/restart</code> - restart trade bot
     <code>/fetch</code> - fetch repository
-    <code>/restart-bot</code> - restart trade bot
+    <code>/restart</code> - restart trade bot
     <code>/restart-commands</code> - restart commands
     <code>/help</code> - show available commands
     `,
