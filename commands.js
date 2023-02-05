@@ -93,7 +93,6 @@ function pullRepo(id) {
   });
 }
 
-
 function sendHelp(id) {
   bot.getMyCommands().then((commands) => {
     const help = commands.reduce((acc, command) => {
