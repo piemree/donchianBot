@@ -7,7 +7,7 @@ const client = new USDMClient({
   api_key: config.API_KEY,
   api_secret: config.API_SECRET,
   baseUrl: config.baseUrl,
-  recvWindow: 10000,
+  recvWindow: 100000,
 });
 
 async function getBalance(asset = "USDT") {
