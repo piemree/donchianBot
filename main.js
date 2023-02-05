@@ -56,7 +56,7 @@ async function main({
         await b.closeLong({ symbol, quantity, portion });
         lastTime = time;
       }
-      if (true && time != lastTime) {
+      if (close < donchianChannelsFast.lower && time != lastTime) {
         await b.closeLong({ symbol, quantity });
         await b.cancelAllOpenOrders({ symbol });
         lastTime = time;
