@@ -28,7 +28,16 @@ function atr({ input = [], period = 14 }) {
   });
 }
 
+function rsi({ input = [], period = 14 }) {
+  const close = input.map((d) => d.close);
+  return ta.rsi({
+    values: close,
+    period,
+  });
+}
+
 module.exports = {
   donchianChannels,
   atr,
+  rsi,
 };

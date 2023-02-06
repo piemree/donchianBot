@@ -8,6 +8,9 @@ async function main({
   slowDonchianPeriod,
   fastDonchianPeriod,
   atrPeriod,
+  rsiPeriod,
+  rsiUpper,
+  rsiLower,
   entryPercentage,
   portion,
 }) {
@@ -30,14 +33,15 @@ async function main({
     period: fastDonchianPeriod,
   });
   const atrs = ta.atr({ input: ohlc, period: atrPeriod });
+  const rsis = ta.rsi({ input: ohlc, period: rsiPeriod });
 
   const close = ohlc[ohlc.length - 1].close;
   const time = ohlc[ohlc.length - 1].time;
   const atr = atrs[atrs.length - 1];
+  const rsi = rsis[rsis.length - 1];
 
-
-  const longCondition = close > donchianChannelsSlow.upper;
-  const shortCondition = close < donchianChannelsSlow.lower;
+  const longCondition = rsi > rsiUpper;
+  const shortCondition = rsi < rsiLower;
   const longStop = close - atr;
   const shortStop = close + atr;
   const quantity = (balance * entryPercentage) / close;
@@ -56,7 +60,7 @@ async function main({
         await b.closeLong({ symbol, quantity, portion });
         lastTime = time;
       }
-      if (close < donchianChannelsFast.lower && time != lastTime) {
+      if (close < donchianChannelsSlow.lower && time != lastTime) {
         await b.closeLong({ symbol, quantity });
         await b.cancelAllOpenOrders({ symbol });
         lastTime = time;

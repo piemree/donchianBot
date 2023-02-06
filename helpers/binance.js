@@ -80,11 +80,12 @@ async function shortPosition({ symbol, sl, quantity }) {
 }
 async function closeLong({ symbol, quantity, portion = 1 }) {
   if (portion < 1) {
+    const qty = (quantity * portion).toFixed(3);
     const result = await client.submitNewOrder({
       symbol: symbol,
       side: "SELL",
       type: "MARKET",
-      quantity: (quantity * portion).toFixed(3),
+      quantity: qty <= "0" ? "0.001" : qty,
     });
     telegram.sendMessage(
       `LONG POSITION CLOSED PARTIALLY (${portion * 100}%):
@@ -95,7 +96,7 @@ async function closeLong({ symbol, quantity, portion = 1 }) {
       symbol: symbol,
       side: "SELL",
       type: "MARKET",
-      quantity: quantity,
+      quantity: quantity.toFixed(3),
     });
 
     telegram.sendMessage(
@@ -106,11 +107,12 @@ async function closeLong({ symbol, quantity, portion = 1 }) {
 }
 async function closeShort({ symbol, quantity, portion = 1 }) {
   if (portion < 1) {
+    const qty = (quantity * portion).toFixed(3);
     const result = await client.submitNewOrder({
       symbol: symbol,
       side: "BUY",
       type: "MARKET",
-      quantity: (quantity * portion).toFixed(3),
+      quantity: qty <= "0" ? "0.001" : qty,
     });
     telegram.sendMessage(
       `SHORT POSITION CLOSED PARTIALLY (${portion * 100}%):
@@ -121,7 +123,7 @@ async function closeShort({ symbol, quantity, portion = 1 }) {
       symbol: symbol,
       side: "BUY",
       type: "MARKET",
-      quantity: quantity,
+      quantity: quantity.toFixed(3),
     });
 
     telegram.sendMessage(
