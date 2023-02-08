@@ -51,11 +51,24 @@ async function longPosition({ symbol, sl, quantity }) {
       stopPrice: sl.toFixed(1),
     },
   ]);
-
-  telegram.sendMessage(
-    `ENTER LONG POSITION WITH STOP LOSS:
-    ${JSON.stringify(result, null, 2)}`
-  );
+  const message = [
+    {
+      name: "ENTER LONG",
+      symbol: result[0].symbol,
+      side: result[0].side,
+      type: result[0].type,
+      origQty: result[0].origQty,
+    },
+    {
+      name: "STOP LOSS",
+      symbol: result[1].symbol,
+      side: result[1].side,
+      type: result[1].type,
+      origQty: result[1].origQty,
+      stopPrice: result[1].stopPrice,
+    },
+  ];
+  telegram.sendMessage(JSON.stringify(message, null, 2));
 }
 async function shortPosition({ symbol, sl, quantity }) {
   const result = await client.submitMultipleOrders([
@@ -73,24 +86,44 @@ async function shortPosition({ symbol, sl, quantity }) {
       stopPrice: sl.toFixed(1),
     },
   ]);
-  telegram.sendMessage(
-    `ENTER SHORT POSITION WITH STOP LOSS:
-    ${JSON.stringify(result, null, 2)}`
-  );
+
+  const message = [
+    {
+      name: "ENTER SHORT",
+      symbol: result[0].symbol,
+      side: result[0].side,
+      type: result[0].type,
+      origQty: result[0].origQty,
+    },
+    {
+      name: "STOP LOSS",
+      symbol: result[1].symbol,
+      side: result[1].side,
+      type: result[1].type,
+      origQty: result[1].origQty,
+      stopPrice: result[1].stopPrice,
+    },
+  ];
+  telegram.sendMessage(JSON.stringify(message, null, 2));
 }
 async function closeLong({ symbol, quantity, portion = 1 }) {
   if (portion < 1) {
-    const qty = (quantity * portion).toFixed(3);
+    let qty = parseFloat((quantity * portion).toFixed(3));
+    qty = qty <= 0 ? 0.001 : qty;
     const result = await client.submitNewOrder({
       symbol: symbol,
       side: "SELL",
       type: "MARKET",
-      quantity: qty <= "0" ? "0.001" : qty,
+      quantity: qty.toFixed(3),
     });
-    telegram.sendMessage(
-      `LONG POSITION CLOSED PARTIALLY (${portion * 100}%):
-      ${JSON.stringify(result, null, 2)}`
-    );
+    const message = {
+      name: `CLOSE LONG PARTIALLY (${portion * 100}%)`,
+      symbol: result.symbol,
+      side: result.side,
+      type: result.type,
+      origQty: result.origQty,
+    };
+    telegram.sendMessage(JSON.stringify(message, null, 2));
   } else {
     const result = await client.submitNewOrder({
       symbol: symbol,
@@ -99,25 +132,34 @@ async function closeLong({ symbol, quantity, portion = 1 }) {
       quantity: quantity.toFixed(3),
     });
 
-    telegram.sendMessage(
-      `LONG POSITION CLOSED:
-      ${JSON.stringify(result, null, 2)}`
-    );
+    const message = {
+      name: "CLOSE LONG",
+      symbol: result.symbol,
+      side: result.side,
+      type: result.type,
+      origQty: result.origQty,
+    };
+    telegram.sendMessage(JSON.stringify(message, null, 2));
   }
 }
 async function closeShort({ symbol, quantity, portion = 1 }) {
   if (portion < 1) {
-    const qty = (quantity * portion).toFixed(3);
+    let qty = parseFloat((quantity * portion).toFixed(3));
+    qty = qty <= 0 ? 0.001 : qty;
     const result = await client.submitNewOrder({
       symbol: symbol,
       side: "BUY",
       type: "MARKET",
-      quantity: qty <= "0" ? "0.001" : qty,
+      quantity: qty.toFixed(3),
     });
-    telegram.sendMessage(
-      `SHORT POSITION CLOSED PARTIALLY (${portion * 100}%):
-      ${JSON.stringify(result, null, 2)}`
-    );
+    const message = {
+      name: `CLOSE SHORT PARTIALLY (${portion * 100}%)`,
+      symbol: result.symbol,
+      side: result.side,
+      type: result.type,
+      origQty: result.origQty,
+    };
+    telegram.sendMessage(JSON.stringify(message, null, 2));
   } else {
     const result = await client.submitNewOrder({
       symbol: symbol,
@@ -126,10 +168,14 @@ async function closeShort({ symbol, quantity, portion = 1 }) {
       quantity: quantity.toFixed(3),
     });
 
-    telegram.sendMessage(
-      `SHORT POSITION CLOSED:
-      ${JSON.stringify(result, null, 2)}`
-    );
+    const message = {
+      name: "CLOSE SHORT",
+      symbol: result.symbol,
+      side: result.side,
+      type: result.type,
+      origQty: result.origQty,
+    };
+    telegram.sendMessage(JSON.stringify(message, null, 2));
   }
 }
 async function cancelAllOpenOrders({ symbol }) {

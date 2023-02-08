@@ -1,6 +1,6 @@
 const b = require("./helpers/binance");
 const ta = require("./helpers/ta");
-let lastTime = "";
+
 async function main({
   asset,
   symbol,
@@ -14,10 +14,14 @@ async function main({
   entryPercentage,
   portion,
 }) {
-  const [positions, ohlc, balance] = await Promise.all([
+  const [positions, balance, ohlc] = await Promise.all([
     b.findPositions({ symbol }),
-    b.getCandles({ symbol, interval, limit: slowDonchianPeriod + 10 }),
     b.getBalance(asset),
+    b.getCandles({
+      symbol,
+      interval,
+      limit: slowDonchianPeriod + 10,
+    }),
   ]);
 
   const { LongPosition, ShortPosition } = positions;
@@ -32,21 +36,19 @@ async function main({
     input: ohlc,
     period: fastDonchianPeriod,
   });
-  const atrs = ta.atr({ input: ohlc, period: atrPeriod });
-  const rsis = ta.rsi({ input: ohlc, period: rsiPeriod });
 
   const close = ohlc[ohlc.length - 1].close;
-  const time = ohlc[ohlc.length - 1].time;
-  const atr = atrs[atrs.length - 1];
-  const rsi = rsis[rsis.length - 1];
-
-  const longCondition = rsi > rsiUpper;
-  const shortCondition = rsi < rsiLower;
-  const longStop = close - atr;
-  const shortStop = close + atr;
-  const quantity = (balance * entryPercentage) / close;
 
   if (noPosition) {
+    const atrs = ta.atr({ input: ohlc, period: atrPeriod });
+    const rsis = ta.rsi({ input: ohlc, period: rsiPeriod });
+    const rsi = rsis[rsis.length - 1];
+    const atr = atrs[atrs.length - 1];
+    const longCondition = rsi > rsiUpper;
+    const shortCondition = rsi < rsiLower;
+    const longStop = close - atr;
+    const shortStop = close + atr;
+    const quantity = parseFloat((balance * entryPercentage) / close);
     if (longCondition) {
       await b.longPosition({ symbol, quantity, sl: longStop });
     }
@@ -55,27 +57,23 @@ async function main({
     }
   } else {
     if (LongPosition) {
-      const quantity = LongPosition.positionAmt;
-      if (close < donchianChannelsFast.lower && time != lastTime) {
+      const quantity = Math.abs(parseFloat(LongPosition?.positionAmt));
+      if (close < donchianChannelsFast.lower) {
         await b.closeLong({ symbol, quantity, portion });
-        lastTime = time;
       }
-      if (close < donchianChannelsSlow.lower && time != lastTime) {
+      if (close < donchianChannelsSlow.lower) {
         await b.closeLong({ symbol, quantity });
         await b.cancelAllOpenOrders({ symbol });
-        lastTime = time;
       }
     }
     if (ShortPosition) {
-      const quantity = ShortPosition.positionAmt;
-      if (close > donchianChannelsFast.upper && time != lastTime) {
+      const quantity = Math.abs(parseFloat(ShortPosition?.positionAmt));
+      if (close > donchianChannelsFast.upper) {
         await b.closeShort({ symbol, quantity, portion });
-        lastTime = time;
       }
-      if (close > donchianChannelsSlow.upper && time != lastTime) {
+      if (close > donchianChannelsSlow.upper) {
         await b.closeShort({ symbol, quantity });
         await b.cancelAllOpenOrders({ symbol });
-        lastTime = time;
       }
     }
   }

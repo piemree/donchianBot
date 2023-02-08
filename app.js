@@ -1,14 +1,27 @@
 const main = require("./main");
-const { botConfig } = require("./config");
+const config = require("./config");
 const { sendMessage } = require("./helpers/telegram");
 
-(async () => {
-  try {
-    while (true) {
-      await main(botConfig);
-    }
-  } catch (error) {
-    console.log(error);
-    sendMessage(JSON.stringify(error.body, null, 2));
+const { WebsocketClient } = require("binance");
+
+const wsClient = new WebsocketClient({
+  api_key: config.API_KEY,
+  api_secret: config.API_SECRET,
+  beautify: true,
+});
+
+wsClient.subscribeKlines(
+  config.botConfig.symbol,
+  config.botConfig.interval,
+  "usdm"
+);
+
+wsClient.on("message", (msg) => {
+  if (msg?.k?.x) {
+    main(config.botConfig).catch((error) => {
+      const today = new Date().toLocaleString();
+      console.log(today, error);
+      sendMessage(JSON.stringify(error, null, 2));
+    });
   }
-})();
+});
