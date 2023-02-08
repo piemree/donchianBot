@@ -32,10 +32,10 @@ async function main({
     input: ohlc,
     period: slowDonchianPeriod,
   });
-  const donchianChannelsFast = ta.donchianChannels({
-    input: ohlc,
-    period: fastDonchianPeriod,
-  });
+  // const donchianChannelsFast = ta.donchianChannels({
+  //   input: ohlc,
+  //   period: fastDonchianPeriod,
+  // });
 
   const close = ohlc[ohlc.length - 1].close;
 
@@ -58,9 +58,9 @@ async function main({
   } else {
     if (LongPosition) {
       const quantity = Math.abs(parseFloat(LongPosition?.positionAmt));
-      if (close < donchianChannelsFast.lower) {
-        await b.closeLong({ symbol, quantity, portion });
-      }
+      // if (close < donchianChannelsFast.lower) {
+      //   await b.closeLong({ symbol, quantity, portion });
+      // }
       if (close < donchianChannelsSlow.lower) {
         await b.closeLong({ symbol, quantity });
         await b.cancelAllOpenOrders({ symbol });
@@ -68,9 +68,9 @@ async function main({
     }
     if (ShortPosition) {
       const quantity = Math.abs(parseFloat(ShortPosition?.positionAmt));
-      if (close > donchianChannelsFast.upper) {
-        await b.closeShort({ symbol, quantity, portion });
-      }
+      // if (close > donchianChannelsFast.upper) {
+      //   await b.closeShort({ symbol, quantity, portion });
+      // }
       if (close > donchianChannelsSlow.upper) {
         await b.closeShort({ symbol, quantity });
         await b.cancelAllOpenOrders({ symbol });
