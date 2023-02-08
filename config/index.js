@@ -13,7 +13,7 @@ module.exports = {
   },
   botConfig: {
     asset: "USDT",
-    symbol: "BTCUSDT",
+    symbol: "ETHUSDT",
     interval: "1h",
     slowDonchianPeriod: 200,
     fastDonchianPeriod: 20,
