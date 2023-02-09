@@ -23,5 +23,6 @@ module.exports = {
     rsiPeriod: 14,
     rsiUpper: 70,
     rsiLower: 30,
+    maxRsiDiff: 15,
   },
 };

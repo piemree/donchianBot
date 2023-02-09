@@ -6,13 +6,12 @@ async function main({
   symbol,
   interval,
   slowDonchianPeriod,
-  fastDonchianPeriod,
   atrPeriod,
   rsiPeriod,
   rsiUpper,
   rsiLower,
+  maxRsiDiff,
   entryPercentage,
-  portion,
 }) {
   const [positions, balance, ohlc] = await Promise.all([
     b.findPositions({ symbol }),
@@ -32,10 +31,6 @@ async function main({
     input: ohlc,
     period: slowDonchianPeriod,
   });
-  // const donchianChannelsFast = ta.donchianChannels({
-  //   input: ohlc,
-  //   period: fastDonchianPeriod,
-  // });
 
   const close = ohlc[ohlc.length - 1].close;
 
@@ -43,9 +38,11 @@ async function main({
     const atrs = ta.atr({ input: ohlc, period: atrPeriod });
     const rsis = ta.rsi({ input: ohlc, period: rsiPeriod });
     const rsi = rsis[rsis.length - 1];
+    const rs2 = rsis[rsis.length - 2];
+    const rsiDiff = Math.abs(rsi - rs2) < maxRsiDiff;
     const atr = atrs[atrs.length - 1];
-    const longCondition = rsi > rsiUpper;
-    const shortCondition = rsi < rsiLower;
+    const longCondition = rsi > rsiUpper && rsiDiff;
+    const shortCondition = rsi < rsiLower && rsiDiff;
     const longStop = close - atr;
     const shortStop = close + atr;
     const quantity = parseFloat((balance * entryPercentage) / close);
@@ -58,9 +55,6 @@ async function main({
   } else {
     if (LongPosition) {
       const quantity = Math.abs(parseFloat(LongPosition?.positionAmt));
-      // if (close < donchianChannelsFast.lower) {
-      //   await b.closeLong({ symbol, quantity, portion });
-      // }
       if (close < donchianChannelsSlow.lower) {
         await b.closeLong({ symbol, quantity });
         await b.cancelAllOpenOrders({ symbol });
@@ -68,9 +62,6 @@ async function main({
     }
     if (ShortPosition) {
       const quantity = Math.abs(parseFloat(ShortPosition?.positionAmt));
-      // if (close > donchianChannelsFast.upper) {
-      //   await b.closeShort({ symbol, quantity, portion });
-      // }
       if (close > donchianChannelsSlow.upper) {
         await b.closeShort({ symbol, quantity });
         await b.cancelAllOpenOrders({ symbol });
