@@ -84,8 +84,7 @@ function getPositions(id) {
           id,
           "Long Position \n" + JSON.stringify(message, null, 2)
         );
-      }
-      if (status.ShortPosition) {
+      } else if (status.ShortPosition) {
         const message = {
           symbol: status.ShortPosition.symbol,
           positionAmt: status.ShortPosition.positionAmt,
@@ -100,8 +99,9 @@ function getPositions(id) {
           id,
           "Short Position \n" + JSON.stringify(message, null, 2)
         );
+      } else {
+        bot.sendMessage(id, "No open positions");
       }
-      bot.sendMessage(id, "No open positions");
     })
     .catch((error) => {
       bot.sendMessage(id, JSON.stringify(error.body, null, 2));
