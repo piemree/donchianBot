@@ -71,11 +71,37 @@ function getPositions(id) {
     symbol: botConfig.symbol,
   })
     .then((status) => {
-      if (!status.LongPosition && !status.ShortPosition) {
-        bot.sendMessage(id, "No open positions");
-        return;
+      if (status.LongPosition) {
+        const message = {
+          symbol: status.LongPosition.symbol,
+          positionAmt: status.LongPosition.positionAmt,
+          entryPrice: status.LongPosition.entryPrice,
+          unRealizedProfit: status.LongPosition.unRealizedProfit,
+          leverage: status.LongPosition.leverage,
+          updateTime: new Date(status.LongPosition.updateTime).toLocaleString(),
+        };
+        bot.sendMessage(
+          id,
+          "Long Position \n" + JSON.stringify(message, null, 2)
+        );
       }
-      bot.sendMessage(id, JSON.stringify(status, null, 2));
+      if (status.ShortPosition) {
+        const message = {
+          symbol: status.ShortPosition.symbol,
+          positionAmt: status.ShortPosition.positionAmt,
+          entryPrice: status.ShortPosition.entryPrice,
+          unRealizedProfit: status.ShortPosition.unRealizedProfit,
+          leverage: status.ShortPosition.leverage,
+          updateTime: new Date(
+            status.ShortPosition.updateTime
+          ).toLocaleString(),
+        };
+        bot.sendMessage(
+          id,
+          "Short Position \n" + JSON.stringify(message, null, 2)
+        );
+      }
+      bot.sendMessage(id, "No open positions");
     })
     .catch((error) => {
       bot.sendMessage(id, JSON.stringify(error.body, null, 2));
