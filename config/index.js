@@ -21,7 +21,7 @@ module.exports = {
     entryPercentage: 0.5,
     portion: 0.01,
     rsiPeriod: 14,
-    rsiUpper: 60,
+    rsiUpper: 70,
     rsiLower: 30,
   },
 };
