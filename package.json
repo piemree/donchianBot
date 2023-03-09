@@ -12,6 +12,7 @@
   "dependencies": {
     "binance": "^2.3.1",
     "moment": "^2.29.4",
+    "node-cron": "^3.0.2",
     "node-telegram-bot-api": "^0.61.0",
     "technicalindicators": "^3.1.0"
   }

@@ -1,6 +1,7 @@
 const main = require("./main");
 const config = require("./config");
 const { sendMessage } = require("./helpers/telegram");
+const cron = require('node-cron');
 
 // create while loop that run every 5 seconds and run the main function
 
@@ -20,3 +21,4 @@ const { sendMessage } = require("./helpers/telegram");
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 })();
+
