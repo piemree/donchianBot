@@ -3,9 +3,9 @@ module.exports = {
   // API_SECRET:
   //   "73fac1b8a5ad01851f43a01ff7bba25646363994d8cc777ff9bfeca74dd65112",
   // baseUrl: "https://testnet.binancefuture.com",
-  API_KEY: "02jB4sbhBtT7TfZA5ycwCujQBMZtVsxxfIOfllzOHaU6FCJYQUAhgTHrqTp0l3RS",
+  API_KEY: "mfiaqGzJYgBmmh6zqKagMEIR79fR07I6xI8FAqMuXvJ7kQXEA0uOo3iyU1hzJbFK",
   API_SECRET:
-    "ZJpGiMRFjoo3akYp004jSSqinvgpW8diDJ1zB8hru7LNbwgkxdSFKIR1qb2ZW3YO",
+    "6ifyw6Uy85H5gG8USceg5J28QGSgIFA9Zw6S5aPNPdJ2ed4L9hdBpuZVQKq1VbK3",
   baseUrl: "https://fapi.binance.com",
   telegram: {
     chatId: 1431222577,
@@ -15,14 +15,14 @@ module.exports = {
     asset: "USDT",
     symbol: "ETHUSDT",
     interval: "1h",
-    slowDonchianPeriod: 200,
-    fastDonchianPeriod: 20,
     atrPeriod: 14,
-    entryPercentage: 0.5,
-    portion: 0.01,
     rsiPeriod: 14,
     rsiUpper: 70,
     rsiLower: 30,
-    maxRsiDiff: 15,
+    entryMaPeriod: 3,
+    exitMaPeriod: 40,
+    entryAtrMultiplier: 2,
+    exitAtrMultiplier: 2,
+    entryPercentage: 0.95,
   },
 };

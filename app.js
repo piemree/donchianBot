@@ -17,7 +17,7 @@ wsClient.subscribeKlines(
 );
 
 wsClient.on("message", (msg) => {
-  if (msg?.k?.x) {
+  if (msg?.k?.x || true) {
     main(config.botConfig).catch((error) => {
       const today = new Date().toLocaleString();
       console.log(today, error);

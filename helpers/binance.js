@@ -35,22 +35,13 @@ async function getCandles({ symbol, interval, limit }) {
 
   return candles;
 }
-async function longPosition({ symbol, sl, quantity }) {
-  const result = await client.submitMultipleOrders([
-    {
-      symbol: symbol,
-      side: "BUY",
-      type: "MARKET",
-      quantity: quantity.toFixed(3),
-    },
-    {
-      symbol: symbol,
-      side: "SELL",
-      type: "STOP_MARKET",
-      quantity: quantity.toFixed(3),
-      stopPrice: sl.toFixed(1),
-    },
-  ]);
+async function longPosition({ symbol, quantity }) {
+  const result = await client.submitNewOrder({
+    symbol: symbol,
+    side: "BUY",
+    type: "MARKET",
+    quantity: quantity.toFixed(3),
+  });
   const message = [
     {
       name: "ENTER LONG",
@@ -59,33 +50,16 @@ async function longPosition({ symbol, sl, quantity }) {
       type: result[0].type,
       origQty: result[0].origQty,
     },
-    {
-      name: "STOP LOSS",
-      symbol: result[1].symbol,
-      side: result[1].side,
-      type: result[1].type,
-      origQty: result[1].origQty,
-      stopPrice: result[1].stopPrice,
-    },
   ];
   telegram.sendMessage(JSON.stringify(message, null, 2));
 }
 async function shortPosition({ symbol, sl, quantity }) {
-  const result = await client.submitMultipleOrders([
-    {
-      symbol: symbol,
-      side: "SELL",
-      type: "MARKET",
-      quantity: quantity.toFixed(3),
-    },
-    {
-      symbol: symbol,
-      side: "BUY",
-      type: "STOP_MARKET",
-      quantity: quantity.toFixed(3),
-      stopPrice: sl.toFixed(1),
-    },
-  ]);
+  const result = await client.submitNewOrder({
+    symbol: symbol,
+    side: "SELL",
+    type: "MARKET",
+    quantity: quantity.toFixed(3),
+  });
 
   const message = [
     {
@@ -94,14 +68,6 @@ async function shortPosition({ symbol, sl, quantity }) {
       side: result[0].side,
       type: result[0].type,
       origQty: result[0].origQty,
-    },
-    {
-      name: "STOP LOSS",
-      symbol: result[1].symbol,
-      side: result[1].side,
-      type: result[1].type,
-      origQty: result[1].origQty,
-      stopPrice: result[1].stopPrice,
     },
   ];
   telegram.sendMessage(JSON.stringify(message, null, 2));
