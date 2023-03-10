@@ -7,7 +7,6 @@ const cron = require('node-cron');
 
 (async () => {
   while (true) {
-    console.log("Running main function");
     main(config.botConfig).catch((error) => {
       const today = new Date().toLocaleString();
       console.log(today, error);
