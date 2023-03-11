@@ -23,6 +23,6 @@ module.exports = {
     exitMaPeriod: 40,
     entryAtrMultiplier: 2,
     exitAtrMultiplier: 2,
-    entryPercentage: 0.95,
+    entryPercentage: 0.50,
   },
 };
